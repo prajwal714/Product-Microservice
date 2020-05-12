@@ -16,11 +16,10 @@ const message = "Hello world"
 func main() {
 
 	l := log.New(os.Stdout, "product-api", log.LstdFlags)
-	hh := handlers.NewHello(l)
-	gh := handlers.NewGoodbye(l)
+
+	ph := handlers.NewProducts(l)
 	mux := http.NewServeMux()
-	mux.Handle("/", hh)
-	mux.Handle("/goodbye", gh)
+	mux.Handle("/", ph)
 
 	//we are using a custom server with tunes settings and for Read write timeout
 	server := &http.Server{
@@ -33,7 +32,9 @@ func main() {
 	go func() {
 		err := server.ListenAndServe()
 		if err != nil {
-			l.Fatal(err)
+			l.Printf("Error Starting server %s", err)
+			os.Exit(1)
+
 		}
 	}()
 
