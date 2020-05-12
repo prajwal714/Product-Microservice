@@ -30,7 +30,9 @@ func main() {
 		IdleTimeout:  time.Second * 30,
 	}
 	go func() {
+
 		err := server.ListenAndServe()
+		l.Println("Server started at: %s", server.Addr)
 		if err != nil {
 			l.Printf("Error Starting server %s", err)
 			os.Exit(1)
