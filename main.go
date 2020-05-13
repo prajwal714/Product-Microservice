@@ -8,31 +8,39 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/gorilla/mux"
 	"golang.org/x/net/context"
 )
 
-const message = "Hello world"
-
 func main() {
 
-	l := log.New(os.Stdout, "product-api", log.LstdFlags)
+	l := log.New(os.Stdout, "product-api", log.LstdFlags) //defines a new logger object
 
-	ph := handlers.NewProducts(l)
-	mux := http.NewServeMux()
-	mux.Handle("/", ph)
+	ph := handlers.NewProducts(l) //product handler
+	smux := mux.NewRouter()
+
+	getRouter := smux.Methods("GET").Subrouter()
+	getRouter.HandleFunc("/", ph.GetProducts)
+
+	putRouter := smux.Methods("PUT").Subrouter()
+	putRouter.HandleFunc("/{id:[0-9]+}", ph.UpdateProducts)
+
+	postRouter := smux.Methods("POST").Subrouter()
+	postRouter.HandleFunc("/", ph.AddProduct)
 
 	//we are using a custom server with tunes settings and for Read write timeout
 	server := &http.Server{
-		Addr:         ":8080",
-		Handler:      mux,
-		ReadTimeout:  time.Second * 1,
-		WriteTimeout: time.Second * 1,
-		IdleTimeout:  time.Second * 30,
+		Addr:         ":8080",          //configure bind address
+		Handler:      smux,             //default handler
+		ReadTimeout:  time.Second * 1,  //max time to read request from client
+		WriteTimeout: time.Second * 1,  //max time to write response to the client
+		IdleTimeout:  time.Second * 30, //max time for connections using TCP keep-Alive
 	}
+	//we run our server is a seperate go routine so as it dosent block the main.go code
 	go func() {
 
 		err := server.ListenAndServe()
-		l.Println("Server started at: %s", server.Addr)
+		l.Println("Server started at: %v", server.Addr)
 		if err != nil {
 			l.Printf("Error Starting server %s", err)
 			os.Exit(1)

@@ -1,3 +1,4 @@
+//we are storing th data of products here
 package data
 
 import (
@@ -8,7 +9,7 @@ import (
 )
 
 //struct tags are used to add our desired tag names, include, exclude or omit key vaue pairs
-
+//we define a Product struct for our products
 type Product struct {
 	ID          int     `json:"id"`
 	Name        string  `json: "name"`
@@ -20,24 +21,34 @@ type Product struct {
 	DeletedOn   string  `json:"-"`
 }
 
+//slice of products defined as custom type Products
+type Products []*Product
+
+//function used to convert the json reader body to Go Object using Decoder
 func (p *Product) FromJSON(r io.Reader) error {
 	e := json.NewDecoder(r)
 	return e.Decode(p)
 }
 
-//slice of products defined as custom type Products
-type Products []*Product
+//function used to convert the wrter Object to JSON object
+func (p *Products) ToJSON(w io.Writer) error {
+	e := json.NewEncoder(w)
+	return e.Encode(p)
+}
 
+//returns the current products List
 func GetProducts() Products {
 	return productList
 }
 
+//function to Add a new product to the Product List
 func AddProduct(p *Product) {
 	p.ID = len(productList) + 1
 	productList = append(productList, p)
 
 }
 
+//update product at given index id, PUT request
 func UpdateProduct(id int, p *Product) error {
 	_, pos, err := findProduct(id)
 
@@ -60,11 +71,6 @@ func findProduct(id int) (*Product, int, error) {
 		}
 	}
 	return nil, -1, ErrProductNotFound
-}
-
-func (p *Products) ToJSON(w io.Writer) error {
-	e := json.NewEncoder(w)
-	return e.Encode(p)
 }
 
 var productList = []*Product{
