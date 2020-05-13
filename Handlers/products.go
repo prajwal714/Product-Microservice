@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"log"
 	data "microservice/Data"
 	"net/http"
@@ -12,6 +13,7 @@ import (
 type Products struct {
 	l *log.Logger
 }
+type KeyProduct struct{}
 
 func NewProducts(l *log.Logger) *Products {
 	return &Products{l}
@@ -32,13 +34,7 @@ func (p *Products) AddProduct(w http.ResponseWriter, r *http.Request) {
 	p.l.Println("Handle POST products")
 
 	//we create an empty product object
-	prod := &data.Product{}
-	//we decode the request body and feed it into the prod object
-	err := prod.FromJSON(r.Body)
-
-	if err != nil {
-		http.Error(w, "Unable to unmarshal json", http.StatusBadRequest)
-	}
+	prod := r.Context().Value(KeyProduct{}).(*data.Product)
 
 	p.l.Printf("\n Prod:  %#v", prod)
 	data.AddProduct(prod)
@@ -53,13 +49,7 @@ func (p *Products) UpdateProducts(w http.ResponseWriter, r *http.Request) { //PU
 	}
 	p.l.Println("Handle PUT Request")
 
-	prod := &data.Product{}
-
-	err = prod.FromJSON(r.Body)
-
-	if err != nil {
-		http.Error(w, "Unable to unmarshal json", http.StatusBadRequest)
-	}
+	prod := r.Context().Value(KeyProduct{}).(*data.Product)
 
 	err = data.UpdateProduct(id, prod)
 
@@ -73,4 +63,25 @@ func (p *Products) UpdateProducts(w http.ResponseWriter, r *http.Request) { //PU
 		return
 	}
 
+}
+
+func (p *Products) MiddlewareProductValidation(next http.Handler) http.Handler {
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		p.l.Println("Middleware function called")
+		prod := &data.Product{}
+
+		err := prod.FromJSON(r.Body)
+
+		if err != nil {
+
+			http.Error(w, "Error Reading Product", http.StatusBadRequest)
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), KeyProduct{}, prod)
+		req := r.WithContext(ctx)
+		next.ServeHTTP(w, req)
+	})
 }

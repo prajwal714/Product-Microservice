@@ -24,9 +24,11 @@ func main() {
 
 	putRouter := smux.Methods("PUT").Subrouter()
 	putRouter.HandleFunc("/{id:[0-9]+}", ph.UpdateProducts)
+	putRouter.Use(ph.MiddlewareProductValidation)
 
 	postRouter := smux.Methods("POST").Subrouter()
 	postRouter.HandleFunc("/", ph.AddProduct)
+	postRouter.Use(ph.MiddlewareProductValidation)
 
 	//we are using a custom server with tunes settings and for Read write timeout
 	server := &http.Server{
