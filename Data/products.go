@@ -13,7 +13,12 @@ import (
 
 //struct tags are used to add our desired tag names, include, exclude or omit key vaue pairs
 //we define a Product struct for our products
+//	swagger:model
 type Product struct {
+	//the id of the user
+	//
+	//required:true
+	//min: 1
 	ID          int     `json:"id"`
 	Name        string  `json:"name" validate:"required"`
 	Description string  `json:"description"`

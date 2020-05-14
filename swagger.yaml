@@ -1,0 +1,86 @@
+basePath: /v
+consumes:
+- application/json
+definitions:
+  Product:
+    description: |-
+      struct tags are used to add our desired tag names, include, exclude or omit key vaue pairs
+      we define a Product struct for our products
+    properties:
+      description:
+        type: string
+        x-go-name: Description
+      id:
+        description: the id of the user
+        format: int64
+        minimum: 1
+        type: integer
+        x-go-name: ID
+      name:
+        type: string
+        x-go-name: Name
+      price:
+        format: float
+        type: number
+        x-go-name: Price
+      sku:
+        type: string
+        x-go-name: SKU
+    required:
+    - id
+    type: object
+    x-go-package: microservice/Data
+host: localhost
+info:
+  description: |-
+    Documentation for Products API
+
+    there are no TOS at this moment, use at your own risk we take no responsibility
+  title: for Products API.
+  version: 1.0.0
+paths:
+  /products:
+    get:
+      description: Returns a list of products
+      operationId: listProducts
+      responses:
+        "200":
+          $ref: '#/responses/productsResponse'
+      tags:
+      - products
+    post:
+      description: Adds a New Product in the list
+      operationId: addNewProduct
+      responses:
+        "200":
+          $ref: '#/responses/productsResponse'
+      tags:
+      - products
+  /products/{id}:
+    put:
+      description: Updates an existing product in the Products list
+      operationId: updateProduct
+      parameters:
+      - description: The id of the products to update from the database
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: ID
+      responses:
+        "201":
+          $ref: '#/responses/noContent'
+      tags:
+      - products
+produces:
+- application/json
+responses:
+  noContent: {}
+  productsResponse:
+    description: A list of products returs in the response
+    schema:
+      items:
+        $ref: '#/definitions/Product'
+      type: array
+swagger: "2.0"

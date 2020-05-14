@@ -1,3 +1,20 @@
+// Package Handlers for Products API.
+//
+// Documentation for Products API
+//
+// there are no TOS at this moment, use at your own risk we take no responsibility
+//
+//     Host: localhost
+//     BasePath: /v
+//     Version: 1.0.0
+//
+//     Consumes:
+//     - application/json
+//
+//     Produces:
+//     - application/json
+//
+// swagger:meta
 package handlers
 
 import (
@@ -16,10 +33,33 @@ type Products struct {
 }
 type KeyProduct struct{}
 
+//	A list of products returs in the response
+//	swagger:response productsResponse
+type productsResponse struct {
+	//	in: body
+	Body []data.Product
+}
+
+//	swagger:parameters updateProduct
+type productIDParameterWrapper struct {
+	// The id of the products to update from the database
+	//in: path
+	//required: true
+	ID int `json:"id"`
+}
+
+//	swagger:response noContent
+type productsNoContect struct {
+}
+
 func NewProducts(l *log.Logger) *Products {
 	return &Products{l}
 }
 
+//	swagger:route GET /products products listProducts
+//	Returns a list of products
+//	responses:
+//		200: productsResponse
 func (p *Products) GetProducts(w http.ResponseWriter, r *http.Request) {
 	lp := data.GetProducts()
 
@@ -31,6 +71,10 @@ func (p *Products) GetProducts(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//	swagger:route POST /products products addNewProduct
+//	Adds a New Product in the list
+//	responses:
+//		200: productsResponse
 func (p *Products) AddProduct(w http.ResponseWriter, r *http.Request) {
 	p.l.Println("Handle POST products")
 
@@ -40,6 +84,13 @@ func (p *Products) AddProduct(w http.ResponseWriter, r *http.Request) {
 	p.l.Printf("\n Prod:  %#v", prod)
 	data.AddProduct(prod)
 }
+
+//	swagger:route PUT /products/{id} products updateProduct
+//	Updates an existing product in the Products list
+//	responses:
+//		201: noContent
+
+//	UpdateProcust updates an existing product in the database
 func (p *Products) UpdateProducts(w http.ResponseWriter, r *http.Request) { //PUT Request handler function
 
 	vars := mux.Vars(r)
