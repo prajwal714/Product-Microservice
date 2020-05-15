@@ -100,6 +100,18 @@ func findProduct(id int) (*Product, int, error) {
 	return nil, -1, ErrProductNotFound
 }
 
+func DeleteProduct(id int) error {
+	_, pos, err := findProduct(id)
+
+	if err != nil {
+		return err
+	}
+
+	productList = append(productList[:pos], productList[pos+1:]...)
+	return nil
+}
+
+//=================================================================================================
 var productList = []*Product{
 	&Product{
 		ID:          1,
