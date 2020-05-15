@@ -50,8 +50,8 @@ func main() {
 	//we run our server is a seperate go routine so as it dosent block the main.go code
 	go func() {
 
+		l.Println("Server started on PORT: 8080")
 		err := server.ListenAndServe()
-		l.Println("Server started at: %v", server.Addr)
 		if err != nil {
 			l.Printf("Error Starting server %s", err)
 			os.Exit(1)
