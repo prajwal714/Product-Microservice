@@ -1,7 +1,3 @@
-//	swagger:route PUT /products/{id} products updateProduct
-//	Updates an existing product in the Products list
-//	responses:
-//		201: noContent
 package handlers
 
 import (
@@ -11,6 +7,11 @@ import (
 
 	"github.com/gorilla/mux"
 )
+
+//	swagger:route PUT /products/{id} products updateProduct
+//	Updates an existing product in the Products list
+//	responses:
+//		201: noContent
 
 //	UpdateProcust updates an existing product in the database
 func (p *Products) UpdateProducts(w http.ResponseWriter, r *http.Request) { //PUT Request handler function

@@ -1,7 +1,12 @@
-basePath: /v
-consumes:
-- application/json
 definitions:
+  GenericError:
+    description: GenericError is a generic error message returned by a server
+    properties:
+      message:
+        type: string
+        x-go-name: Message
+    type: object
+    x-go-package: microservice/Handlers
   Product:
     description: |-
       struct tags are used to add our desired tag names, include, exclude or omit key vaue pairs
@@ -30,14 +35,7 @@ definitions:
     - id
     type: object
     x-go-package: microservice/Data
-host: localhost
-info:
-  description: |-
-    Documentation for Products API
-
-    there are no TOS at this moment, use at your own risk we take no responsibility
-  title: for Products API.
-  version: 1.0.0
+info: {}
 paths:
   /products:
     get:
@@ -57,6 +55,14 @@ paths:
       tags:
       - products
   /products/{id}:
+    delete:
+      description: Removes a product from the given list
+      operationId: deleteProducts
+      responses:
+        "201":
+          $ref: '#/responses/noContent'
+      tags:
+      - products
     put:
       description: Updates an existing product in the Products list
       operationId: updateProduct
@@ -73,9 +79,22 @@ paths:
           $ref: '#/responses/noContent'
       tags:
       - products
-produces:
-- application/json
+  /products{id}:
+    get:
+      description: Returns a single product
+      operationId: listSingleProducts
+      responses:
+        "200":
+          $ref: '#/responses/productsResponse'
+        "404":
+          $ref: '#/responses/errorResponse'
+      tags:
+      - products
 responses:
+  errorResponse:
+    description: Generic error message returned as a string
+    schema:
+      $ref: '#/definitions/GenericError'
   noContent: {}
   productsResponse:
     description: A list of products returs in the response

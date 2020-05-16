@@ -1,20 +1,3 @@
-// Package Handlers for Products API.
-//
-// Documentation for Products API
-//
-// there are no TOS at this moment, use at your own risk we take no responsibility
-//
-//     Host: localhost
-//     BasePath: /v
-//     Version: 1.0.0
-//
-//     Consumes:
-//     - application/json
-//
-//     Produces:
-//     - application/json
-//
-// swagger:meta
 package handlers
 
 import (
@@ -30,23 +13,17 @@ type Products struct {
 }
 type KeyProduct struct{}
 
-//	A list of products returs in the response
-//	swagger:response productsResponse
-type productsResponse struct {
-	//	in: body
-	Body []data.Product
+// ErrInvalidProductPath is an error message when the product path is not valid
+var ErrInvalidProductPath = fmt.Errorf("Invalid Path, path should be /products/[id]")
+
+// GenericError is a generic error message returned by a server
+type GenericError struct {
+	Message string `json:"message"`
 }
 
-//	swagger:parameters updateProduct
-type productIDParameterWrapper struct {
-	// The id of the products to update from the database
-	//in: path
-	//required: true
-	ID int `json:"id"`
-}
-
-//	swagger:response noContent
-type productsNoContect struct {
+// ValidationError is a collection of validation error messages
+type ValidationError struct {
+	Messages []string `json:"messages"`
 }
 
 func NewProducts(l *log.Logger) *Products {
@@ -60,7 +37,7 @@ func (p *Products) MiddlewareProductValidation(next http.Handler) http.Handler {
 		p.l.Println("Middleware function called")
 		prod := &data.Product{}
 
-		err := prod.FromJSON(r.Body)
+		err := data.FromJSON(prod, r.Body)
 
 		if err != nil {
 			p.l.Println("[ERROR] Error reading product", err)

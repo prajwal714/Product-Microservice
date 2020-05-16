@@ -2,9 +2,7 @@
 package data
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
 	"regexp"
 	"time"
 
@@ -32,18 +30,6 @@ type Product struct {
 //slice of products defined as custom type Products
 type Products []*Product
 
-//function used to convert the json reader body to Go Object using Decoder
-func (p *Product) FromJSON(r io.Reader) error {
-	e := json.NewDecoder(r)
-	return e.Decode(p)
-}
-
-//function used to convert the wrter Object to JSON object
-func (p *Products) ToJSON(w io.Writer) error {
-	e := json.NewEncoder(w)
-	return e.Encode(p)
-}
-
 func (p *Product) Validate() error {
 
 	validate := validator.New()
@@ -66,6 +52,17 @@ func validateSKU(fl validator.FieldLevel) bool {
 //returns the current products List
 func GetProducts() Products {
 	return productList
+}
+
+func GetProductsByID(id int) (*Product, error) {
+	_, pos, err := findProduct(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return productList[pos], nil
+
 }
 
 //function to Add a new product to the Product List
