@@ -1,13 +1,20 @@
-// Package Handlers for Products API.
+// Package classification Petstore API.
 //
-// Documentation for Products API
+// the purpose of this application is to provide an application
+// that is using plain go code to define an API
+//
+// This should demonstrate all the possible comment annotations
+// that are available to turn go code into a fully compliant swagger 2.0 spec
+//
+// Terms Of Service:
 //
 // there are no TOS at this moment, use at your own risk we take no responsibility
 //
-//     Host: localhost
-//     BasePath: /v
-//     Version: 1.0.0
+//     Schemes: http, https
+//     Host: localhost:8080
 //
+//     BasePath: /
+//     Version:	1.0.0
 //     Consumes:
 //     - application/json
 //
@@ -15,7 +22,6 @@
 //     - application/json
 //
 // swagger:meta
-
 package handlers
 
 import data "microservice/Data"
@@ -35,7 +41,7 @@ type productsResponse struct {
 	Body []data.Product
 }
 
-//	swagger:parameters updateProduct
+//	swagger:parameters updateProduct listSingleProduct deleteProducts
 type productIDParameterWrapper struct {
 	// The id of the products to update from the database
 	//in: path
@@ -43,6 +49,7 @@ type productIDParameterWrapper struct {
 	ID int `json:"id"`
 }
 
+// No content
 //	swagger:response noContent
-type productsNoContect struct {
+type productsNoContent struct {
 }

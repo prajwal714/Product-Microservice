@@ -1,18 +1,24 @@
+basePath: /
+consumes:
+- application/json
 definitions:
   GenericError:
-    description: GenericError is a generic error message returned by a server
+    description: GenericError GenericError is a generic error message returned by
+      a server
     properties:
       message:
+        description: message
         type: string
         x-go-name: Message
     type: object
-    x-go-package: microservice/Handlers
+    x-go-package: microservice/client/models
   Product:
     description: |-
-      struct tags are used to add our desired tag names, include, exclude or omit key vaue pairs
+      Product struct tags are used to add our desired tag names, include, exclude or omit key vaue pairs
       we define a Product struct for our products
     properties:
       description:
+        description: description
         type: string
         x-go-name: Description
       id:
@@ -22,20 +28,34 @@ definitions:
         type: integer
         x-go-name: ID
       name:
+        description: name
         type: string
         x-go-name: Name
       price:
+        description: price
         format: float
         type: number
         x-go-name: Price
       sku:
+        description: s k u
         type: string
         x-go-name: SKU
     required:
     - id
     type: object
-    x-go-package: microservice/Data
-info: {}
+    x-go-package: microservice/client/models
+host: localhost:8080
+info:
+  description: |-
+    the purpose of this application is to provide an application
+    that is using plain go code to define an API
+
+    This should demonstrate all the possible comment annotations
+    that are available to turn go code into a fully compliant swagger 2.0 spec
+  termsOfService: there are no TOS at this moment, use at your own risk we take no
+    responsibility
+  title: Petstore API.
+  version: 1.0.0
 paths:
   /products:
     get:
@@ -58,6 +78,14 @@ paths:
     delete:
       description: Removes a product from the given list
       operationId: deleteProducts
+      parameters:
+      - description: The id of the products to update from the database
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: ID
       responses:
         "201":
           $ref: '#/responses/noContent'
@@ -82,7 +110,15 @@ paths:
   /products{id}:
     get:
       description: Returns a single product
-      operationId: listSingleProducts
+      operationId: listSingleProduct
+      parameters:
+      - description: The id of the products to update from the database
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: ID
       responses:
         "200":
           $ref: '#/responses/productsResponse'
@@ -90,16 +126,22 @@ paths:
           $ref: '#/responses/errorResponse'
       tags:
       - products
+produces:
+- application/json
 responses:
   errorResponse:
     description: Generic error message returned as a string
     schema:
       $ref: '#/definitions/GenericError'
-  noContent: {}
+  noContent:
+    description: No content
   productsResponse:
     description: A list of products returs in the response
     schema:
       items:
         $ref: '#/definitions/Product'
       type: array
+schemes:
+- http
+- https
 swagger: "2.0"
